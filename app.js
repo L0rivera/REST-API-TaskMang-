@@ -25,7 +25,7 @@ export const methodsDir = {
   _dirname,
 };
 
-// Configuración de CORS para permitir solicitudes desde un dominio específico con credenciales
+// Configuración de CORS 
 const corsOptions = {
     origin: 'http://localhost:8000',
     credentials: true,
