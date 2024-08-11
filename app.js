@@ -38,7 +38,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
-    origin: 'http://localhost:8000',
+    origin: ['http://localhost:8000', 'https://task-managerapi-f602f7ec1326.herokuapp.com'],
     methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
