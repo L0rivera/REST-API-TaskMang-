@@ -6,7 +6,7 @@ export class ProjectModel {
     const session = getSession();
     try {
       const result = await session.run(
-        "MATCH (u:User {email: $email})-[:CREATE]->(p:Project) RETURN p.id as id, p.name as name, p.description as description", // Modificar la consulta para incluir p.id
+        "MATCH (u:User {email: $email})-[:CREATE|MEMBER_OF]->(p:Project) RETURN p.id as id, p.name as name, p.description as description", // Modificar la consulta para incluir p.id
         { email: email }
       );
       const projects = result.records.map((record) => ({

@@ -66,9 +66,9 @@ static async deleteTask(req, res) {
 }
 
  static async SortTask(req, res) {
-    let { order, sectionId } = req.body;
+    let { order, sourceSectionId, destinationSectionId } = req.body;
     try {
-      let result = await TaskModel.SortTask(order, sectionId);
+      let result = await TaskModel.SortTask(order, sourceSectionId, destinationSectionId);
       return res.json(result);
     } catch (err) {
       console.error(`Error: ${err}, message: ${err.message}`);

@@ -7,7 +7,7 @@ export class SectionModel {
 
     try {
       const result = await session.run(
-        "MATCH (u:User {email: $email})-[:CREATE]->(p:Project {id: $projectId}), (p)-[:HAS_SECTION]->(st:TaskState) RETURN st",
+        "MATCH (u:User {email: $email})-[:CREATE|MEMBER_OF]->(p:Project {id: $projectId}), (p)-[:HAS_SECTION]->(st:TaskState) RETURN st",
         { email: email, projectId: projectId }
       );
       const Sections = result.records.map(

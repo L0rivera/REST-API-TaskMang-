@@ -29,9 +29,9 @@ static async inviteResponse(req, res) {
     const { invitationId, action } = req.body;
     try {
         if (action === 'accept') {
-            await InvitationModel.respondInvitation(invitationId);
+            await InvitationModel.respondInvitation(invitationId, action);
         } else if (action === 'reject') {
-            await InvitationModel.respondInvitation(invitationId);
+            await InvitationModel.respondInvitation(invitationId, action);
         }
         return res.status(200).json({ message: "Invitation updated successfully" });
     } catch (err) {

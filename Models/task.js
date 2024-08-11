@@ -133,17 +133,20 @@ export class TaskModel {
     }
   }
 
-  static async SortTask(order, sectionId) {
+  static async SortTask(order, sourceSectionId, destinationSectionId) {
         const session = getSession();
         try {
-            let result = await session.run(
-                `UNWIND $order AS o
-                 MATCH (ts:TaskState {id: $sectionId})-[:HAS_TASK]->(t:Task {id: o.id})
-                 SET t.order = o.position
-                 RETURN t.id, t.order`, 
-                { sectionId: sectionId, order: order.map(({ id, position }) => ({ id, position }))}
-            );
-            
+          let result = await session.run(
+            `UNWIND $order AS o
+             MATCH (t:Task {id: o.id})
+             MATCH (ts:TaskState {id: $destinationSectionId})
+             OPTIONAL MATCH (oldTs:TaskState {id: $sourceSectionId})-[r:HAS_TASK]->(t)
+             DELETE r
+             MERGE (ts)-[:HAS_TASK]->(t)
+             SET t.order = o.position
+             RETURN t.id, t.order`, 
+            { sourceSectionId, destinationSectionId, order: order.map(({ id, position }) => ({ id, position }))}
+        );
             console.log("Result:", result.records.map(record => record.toObject()));
             return result.records.map(record => record.toObject());
         } catch (err) {

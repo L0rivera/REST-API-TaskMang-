@@ -47,32 +47,39 @@ export class InvitationModel {
 
   static async respondInvitation(invitationId, action) {
     const session = getSession();
-    try {
-      let result;
-      if (action === "accept") {
-        result = await session.run(
-          `MATCH (i:Invitation {id: $invitationId})
-                 SET i.status = 'accepted'
-                 WITH i
-                 MATCH (sender:User {id: i.senderId}), (receiver:User {id: i.receiverId}), (project:Project {id: i.projectId})
-                 CREATE (receiver)-[:MEMBER_OF]->(project)
-                 CREATE (sender)-[:TEAMMATE]->(receiver)
-                 RETURN i`,
-          { invitationId }
-        );
-      } else if (action === "reject") {
-        result = await session.run(
-          `MATCH (i:Invitation {id: $invitationId})
-                 SET i.status = 'rejected'
-                 RETURN i`,
-          { invitationId }
-        );
-      }
-      return result.records[0].get("i").properties;
-    } catch (err) {
-      console.log(`Error: ${err}, Error message: ${err.message}`);
-    } finally {
-      session.close();
-    }
+try {
+  let result;
+  if (action === "accept") {
+    result = await session.run(
+      `MATCH (i:Invitation {id: $invitationId})
+       SET i.status = 'accepted'
+       WITH i
+       MATCH (sender:User {id: i.senderId}), (receiver:User {id: i.receiverId}), (project:Project {id: i.projectId})
+       CREATE (receiver)-[:MEMBER_OF]->(project)
+       CREATE (sender)-[:TEAMMATE]->(receiver)
+       RETURN i`,
+      { invitationId }
+    );
+  } else if (action === "reject") {
+    result = await session.run(
+      `MATCH (i:Invitation {id: $invitationId})
+       SET i.status = 'rejected'
+       RETURN i`,
+      { invitationId }
+    );
+  }
+  
+  // Verificar si se obtuvo un resultado
+  if (!result || result.records.length === 0) {
+    throw new Error("No se encontró la invitación o no se actualizó correctamente.");
+  }
+
+  return result.records[0].get("i").properties;
+} catch (err) {
+  console.log(`Error: ${err}, Error message: ${err.message}`);
+  throw err;  // Propagamos el error para manejarlo adecuadamente en otro lugar si es necesario
+} finally {
+  session.close();
+}
   }
 }

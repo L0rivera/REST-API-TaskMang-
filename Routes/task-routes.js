@@ -7,4 +7,4 @@ Taskrouter.get('/tasks', TaskController.GetAll);
 Taskrouter.post('/task', TaskController.addTask);
 Taskrouter.get('/detail/task', TaskController.detailsTask);
 Taskrouter.delete('/delete/task', TaskController.deleteTask);
-Taskrouter.delete('/sort/task', TaskController.SortTask);
+Taskrouter.post('/sort/task', TaskController.SortTask);

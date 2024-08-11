@@ -39,7 +39,7 @@ const server = createServer(app);
 const io = new Server(server, {
     cors: {
     origin: 'http://localhost:8000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
   }
