@@ -37,7 +37,7 @@ export class UserController {
       );
       res.cookie("jwt", token, {
         path: "/",
-        httpOnly: true, // Agrega esta opción para mayor seguridad
+        // httpOnly: true, // Agrega esta opción para mayor seguridad
         secure: process.env.NODE_ENV === "production", // Configura secure solo en producción
         maxAge: 1000 * 60 * 60 * 24 * 1,
       });
