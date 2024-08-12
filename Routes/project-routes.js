@@ -4,5 +4,5 @@ import authMiddleware from "../middlewares/Cookieauth.js";
 
 export const Projectsrouter = Router();
 
-Projectsrouter.get('/projects', authMiddleware, ProjectControllers.GetAll);
-Projectsrouter.post('/project', authMiddleware, ProjectControllers.AddProject);
+Projectsrouter.get('/projects', ProjectControllers.GetAll);
+Projectsrouter.post('/project', ProjectControllers.AddProject);

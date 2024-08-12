@@ -54,7 +54,7 @@ export class TaskModel {
       );
 
       const task = result.records.map((record) => record.get("t").properties);
-      return task;
+      return task[0];
     } catch (err) {
       console.log(`Error: ${err}, Error message: ${err.message}`);
     } finally {

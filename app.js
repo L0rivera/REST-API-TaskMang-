@@ -1,3 +1,5 @@
+import './Models/cron.js'; // Esto ejecuta el cron job cuando se arranca la aplicación
+
 import express from "express";
 import { Server } from 'socket.io';
 import { createServer } from "node:http";
@@ -16,9 +18,11 @@ import { Projectsrouter } from "./Routes/project-routes.js";
 import { Sectionrouter } from "./Routes/section-routes.js";
 import { Taskrouter } from "./Routes/task-routes.js";
 import { Invitationsrouter } from "./Routes/invitation-routes.js";
+import { Notificacionrouter } from './Routes/notification-routes.js';
 
 // Model
 import { TaskModel } from "./Models/task.js";
+import { SectionModel } from './Models/section.js';
 
 const _dirname = path.dirname(fileURLToPath(import.meta.url));
 export const methodsDir = {
@@ -38,7 +42,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
-    origin: ['http://localhost:8000', 'https://task-managerapi-f602f7ec1326.herokuapp.com'],
+    origin: 'http://localhost:8000',
     methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -65,9 +69,26 @@ app.use('/api', Sectionrouter);
 // Tasks
 app.use('/api', Taskrouter);
 
+// Invitations
 app.use('/api', Invitationsrouter);
 
+// Notifications
+app.use('/api', Notificacionrouter);
+
 // WEBSOCKET
+
+// Add a Task
+io.on('connection', (socket) => {
+    console.log('New client connected');
+    // Controlador para el evento de tarea creada
+    socket.on('taskCreated', (data) => {
+        // Emitir el evento a todos los clientes conectados
+        io.emit('newTask', data);
+    });
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+});
 
 // Edit a Task
 io.on('connection', (socket) => {
@@ -76,7 +97,7 @@ io.on('connection', (socket) => {
 
     try {
       const updatedTask = await TaskModel.updateTask(taskId, { title, description, startDate, dueDate, importance });
-      socket.emit('taskUpdated', updatedTask);
+      io.emit('taskUpdated', updatedTask);
     } catch (err) {
       console.error(`Error updating task: ${err.message}`);
       socket.emit('updateError', err.message);
@@ -84,6 +105,65 @@ io.on('connection', (socket) => {
   });
 });
 
+// Delete a Task
+io.on('connection', (socket) => {
+    // Controlador para el evento de eliminación de tarea
+    socket.on('deleteTask', async (data) => {
+        const { taskId } = data;
+        try {
+            // Aquí debes llamar a la función que maneja la eliminación de tareas en tu modelo
+            const result = await TaskModel.deleteTask(taskId);
+            // Emitir un evento a todos los clientes conectados
+            io.emit('taskDeleted', result );
+        } catch (err) {
+            console.error(`Error deleting task: ${err.message}`);
+            io.emit('deleteError', err.message);
+        }
+    });
+});
+
+// Sort a Task
+io.on('connection', (socket) => {
+    console.log('New client connected');
+    // Controlador para el evento de tarea creada
+    socket.on('TaskSorted', (data) => {
+        // Emitir el evento a todos los clientes conectados
+        io.emit('newTasksort', data);
+    });
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+});
+
+// Add a Section
+io.on('connection', (socket) => {
+    console.log('New client connected');
+    // Controlador para el evento de tarea creada
+    socket.on('sectionCreated', (data) => {
+        // Emitir el evento a todos los clientes conectados
+        io.emit('newSection', data);
+    });
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+});
+
+// Sort a Section
+io.on('connection', (socket) => {
+  // Controlador para el evento de ordenación de secciones
+  socket.on('sortSections', async (data) => {
+    const { order, projectId } = data;
+    try {
+      // Aquí debes llamar a la función que maneja la reordenación de secciones en tu modelo
+      const result = await SectionModel.SortSection(order, projectId);
+      // Emitir un evento a todos los clientes conectados
+      io.emit('sectionsSorted', result );
+    } catch (err) {
+      console.error(`Error sorting sections: ${err.message}`);
+      socket.emit('sortError', err.message);
+    }
+  });
+});
 
 // PORT
 const PORT = process.env.PORT || 3000;

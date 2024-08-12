@@ -3,7 +3,8 @@ import getCookie from "../lib/GetCookie.js";
 
 export class ProjectControllers {
   static async GetAll(req, res) {
-    const email = req.user.email;
+      const decode = getCookie(req, res);
+    const email = decode.email;
 
     try {
       const result = await ProjectModel.GetAll(email);
@@ -25,7 +26,8 @@ export class ProjectControllers {
             messege: "Los campos estan vacios o incompletos",
           });
       } 
-    const email = req.user.email;
+      const decode = getCookie(req, res);
+    const email = decode.email;
     try {
       const { project, sections } = await ProjectModel.addProject(name, description, email);
       return res.json({ project, sections });

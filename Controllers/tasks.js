@@ -24,7 +24,10 @@ export class TaskController {
         startdate,
         duedate
       );
-      return res.json(result);
+      // Obtén el ID de la tarea
+const taskId = result.id;
+// Devuelve el ID de la tarea en la respuesta
+return res.status(201).json({ message: 'Task created successfully', taskId });
     } catch (err) {
       console.error(`Error: ${err}, message: ${err.message}`);
       return res.status(500).json({ message: "Internal Server Error" });

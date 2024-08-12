@@ -31,7 +31,7 @@ export class UserController {
     try {
       const logged = await UserModel.login(email, password);
       const token = jsonwebtoken.sign(
-        { username: logged.username, email, id: logged.id },
+        { email },
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
@@ -39,7 +39,7 @@ export class UserController {
         path: "/",
         httpOnly: true, // Agrega esta opción para mayor seguridad
         secure: process.env.NODE_ENV === "production", // Configura secure solo en producción
-        maxAge: 1000 * 60 * 60,
+        maxAge: 1000 * 60 * 60 * 24 * 1,
       });
       if (logged)
         return res.status(200).json({ message: "Login successful", token });
