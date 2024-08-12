@@ -35,12 +35,13 @@ export class UserController {
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
-      res.cookie("jwt", token, {
-        path: "/",
-        // httpOnly: true, // Agrega esta opción para mayor seguridad
-        secure: process.env.NODE_ENV === "production", // Configura secure solo en producción
-        maxAge: 1000 * 60 * 60 * 24 * 1,
-      });
+      console.log('Setting cookie:', token);
+res.cookie("jwt", token, {
+    path: "/",
+    httpOnly: true, // Agrega para mayor seguridad
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 1000 * 60 * 60 * 24 * 1,
+});
       if (logged)
         return res.status(200).json({ message: "Login successful", token });
     } catch (err) {
