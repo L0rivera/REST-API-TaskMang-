@@ -31,7 +31,7 @@ export const methodsDir = {
 
 // Configuración de CORS 
 const corsOptions = {
-    origin: [ 'http://localhost:8000' ,'http://10.0.2.2:3000'],
+    origin: ['https://localhost', 'http://localhost:8000' ,'http://10.0.2.2:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -166,7 +166,7 @@ io.on('connection', (socket) => {
 });
 
 // PORT
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 1000;
 
 server.listen(PORT, () => {
   console.log(`Server is listening on PORT: ${PORT}`);
