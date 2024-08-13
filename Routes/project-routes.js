@@ -6,3 +6,4 @@ export const Projectsrouter = Router();
 
 Projectsrouter.get('/projects', authMiddleware, ProjectControllers.GetAll);
 Projectsrouter.post('/project', authMiddleware, ProjectControllers.AddProject);
+Projectsrouter.get('/search/projects', authMiddleware, ProjectControllers.SearchProject);

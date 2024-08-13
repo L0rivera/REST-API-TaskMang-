@@ -4,7 +4,6 @@ import getCookie from "../lib/GetCookie.js";
 export class ProjectControllers {
   static async GetAll(req, res) {
     const email = req.user.email;
-
     try {
       const result = await ProjectModel.GetAll(email);
       return res.json(result);
@@ -31,6 +30,18 @@ export class ProjectControllers {
       return res.json({ project, sections });
     } catch (err) {
       console.error(`Error: ${err}, message: ${err.message}`);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+
+  static async SearchProject(req, res) {
+    let { query } = req.query;
+    let email = req.user.email;
+    try {
+      let result = await ProjectModel.SearchProject(email, query);
+      return res.json(result);
+    } catch(err) {
+       console.error(`Error: ${err}, message: ${err.message}`);
       return res.status(500).json({ message: "Internal Server Error" });
     }
   }

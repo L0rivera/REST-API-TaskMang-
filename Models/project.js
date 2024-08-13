@@ -67,15 +67,21 @@ export class ProjectModel {
     }
   }
 
-  // static async deleteProject (email) {
-  //   const session = getSession();
-
-  //   try {
-  //     const result = await session.run(
-  //       'MATCH (p:Project {id: $projectId}) DETACH DELETE, '
-  //     )
-  //   } catch(err) {
-
-  //   }
-  // }
+  static async SearchProject(email, query) {
+     const session = getSession();
+        try {
+            const result = await session.run(
+                `MATCH (u:User {email: $email})-[:CREATE|MEMBER_OF]->(p)
+                 WHERE toLower(p.name) CONTAINS toLower($query)
+                 RETURN p`,
+                { email, query }
+            );
+            return result.records.map(record => record.get('p').properties);
+        } catch (err) {
+            console.error(err);
+            throw new Error('Error searching users');
+        } finally {
+            session.close();
+        }
+  }
 }
