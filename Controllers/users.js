@@ -40,6 +40,7 @@ res.cookie("jwt", token, {
     path: "/",
     httpOnly: true, // Agrega para mayor seguridad
     secure: process.env.NODE_ENV === "production",
+     sameSite: 'None',
     maxAge: 1000 * 60 * 60 * 24 * 1,
 });
       if (logged)
